@@ -1,3 +1,20 @@
+# =========================
+# Stage 1: Build frontend
+# =========================
+FROM node:20 AS frontend
+
+WORKDIR /var/www
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+RUN npm run production
+
+
+# =========================
+# Stage 2: Laravel
+# =========================
 FROM php:8.2-cli
 
 RUN apt-get update && apt-get install -y \
@@ -28,16 +45,18 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
-# Copy seluruh project terlebih dahulu
 COPY . .
 
-# Baru install dependency Laravel
 RUN composer install \
     --no-dev \
     --prefer-dist \
     --no-interaction \
     --no-progress \
     --optimize-autoloader
+
+# Ambil hasil build CSS/JS dari stage Node
+COPY --from=frontend /var/www/public/css ./public/css
+COPY --from=frontend /var/www/public/js ./public/js
 
 RUN mkdir -p storage/framework/cache \
     storage/framework/sessions \
