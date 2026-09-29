@@ -15,7 +15,15 @@ class PermissionSeeder extends Seeder {
             'lihat sanksi','tambah sanksi','ubah sanksi','hapus sanksi',
             'lihat perolehan','tambah perolehan','ubah perolehan','hapus perolehan',
             'lihat ruangan','tambah ruangan','ubah ruangan','hapus ruangan','import ruangan','export ruangan',
-            'kelola pengguna','kelola role','kelola permission',
+            'kelola pengguna',
+            'lihat pengguna',
+            'tambah pengguna',
+            'ubah pengguna',
+            'hapus pengguna',
+            'detail pengguna',
+            
+            'kelola role',
+            'kelola permission',
             'lihat laporan','export laporan','lihat aktivitas','lihat audit',
             'mengatur profile','lihat peran dan hak akses','tambah peran dan hak akses','ubah peran dan hak akses','hapus peran dan hak akses',
         ];
