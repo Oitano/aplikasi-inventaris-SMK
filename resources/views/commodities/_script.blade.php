@@ -39,21 +39,28 @@
 					// BUKTI NOTA
 					if (res.data.receipt) {
 						$("#show_commodity #receipt").html(
-							`<a href="/storage/${res.data.receipt}" target="_blank" class="btn btn-primary">
-								<i class="fas fa-file-alt"></i> Lihat Bukti Nota
-							</a>`
+						`<a href="${receiptUrl}" target="_blank" class="btn btn-primary">
+						    <i class="fas fa-file-alt"></i> Lihat Bukti Nota
+						</a>`
 						);
 					} else {
 						$("#show_commodity #receipt").html("Tidak ada bukti nota.");
 					}
 
 					if (res.data.photo) {
-						$("#show_commodity #photo").html(
-							`<img src="/storage/${res.data.photo}" alt="Foto Barang" class="img-fluid rounded" style="max-height: 250px;">`
-						);
-					} else {
-						$("#show_commodity #photo").html('<span class="text-muted">Tidak ada foto barang.</span>');
-					}
+			    const photoUrl = "{{ asset('storage') }}/" + res.data.photo;
+			
+			    $("#show_commodity #photo").html(
+			        `<img src="${photoUrl}" 
+			              alt="Foto Barang" 
+			              class="img-fluid rounded" 
+			              style="max-height: 250px;">`
+			    );
+			} else {
+			    $("#show_commodity #photo").html(
+			        '<span class="text-muted">Tidak ada foto barang.</span>'
+			    );
+			}
 
 					$("#show_commodity #note").val(res.data.note);
 					$("#show_commodity #quantity").val(res.data.quantity);
@@ -124,12 +131,19 @@
 					}
 
 					if (res.data.photo) {
-						$("#edit_commodity #current_photo").html(
-							`<img src="/storage/${res.data.photo}" alt="Foto Barang" class="img-thumbnail" style="max-height: 120px;">`
-						);
-					} else {
-						$("#edit_commodity #current_photo").html("Belum ada foto barang.");
-					}
+			    const photoUrl = "{{ asset('storage') }}/" + res.data.photo;
+			
+			    $("#edit_commodity #current_photo").html(
+			        `<img src="${photoUrl}" 
+			              alt="Foto Barang" 
+			              class="img-thumbnail" 
+			              style="max-height: 120px;">`
+			    );
+			} else {
+			    $("#edit_commodity #current_photo").html(
+			        "Belum ada foto barang."
+			    );
+			}
 
 					$("#edit_commodity form #note").val(res.data.note);
 					$("#edit_commodity form #quantity").val(res.data.quantity);
