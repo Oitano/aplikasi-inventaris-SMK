@@ -28,15 +28,16 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
-COPY composer.json composer.lock ./
+# Copy seluruh project terlebih dahulu
+COPY . .
+
+# Baru install dependency Laravel
 RUN composer install \
     --no-dev \
     --prefer-dist \
     --no-interaction \
     --no-progress \
     --optimize-autoloader
-
-COPY . .
 
 RUN mkdir -p storage/framework/cache \
     storage/framework/sessions \
