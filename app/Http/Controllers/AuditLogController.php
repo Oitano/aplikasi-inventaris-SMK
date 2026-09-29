@@ -1,0 +1,10 @@
+<?php
+namespace App\Http\Controllers;
+use App\AuditLog;
+class AuditLogController extends Controller {
+    public function index(){
+        abort_unless(auth()->user()->can('lihat aktivitas'),403);
+        $logs=AuditLog::with('user')->latest()->paginate(30);
+        return view('audit-logs.index',compact('logs'));
+    }
+}

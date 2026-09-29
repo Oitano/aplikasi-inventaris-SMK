@@ -1,0 +1,23 @@
+<x-layout>
+<x-slot name="title">Peminjaman</x-slot><x-slot name="page_heading">Manajemen Peminjaman</x-slot>
+<div class="row">
+@foreach([['Total Peminjaman',$commodityLoans->count(),'primary'],['Menunggu',$commodityLoans->where('status','Menunggu')->count(),'info'],['Aktif',$commodityLoans->whereIn('status',['Dipinjam','Terlambat'])->count(),'warning'],['Terlambat',$commodityLoans->filter(fn($l)=>$l->effective_status==='Terlambat')->count(),'danger']] as [$label,$v,$c])
+<div class="col-md-3 col-sm-6"><div class="card card-statistic-1"><div class="card-icon bg-{{$c}}"><i class="fas fa-hand-holding"></i></div><div class="card-wrap"><div class="card-header"><h4>{{$label}}</h4></div><div class="card-body">{{$v}}</div></div></div></div>
+@endforeach</div>
+<div class="card"><div class="card-body">@include('utilities.alert')
+<div class="d-flex justify-content-end mb-3">@can('tambah peminjaman')<button class="btn btn-primary" data-toggle="modal" data-target="#createLoan"><i class="fas fa-plus"></i> Peminjaman Baru</button>@endcan</div>
+<x-datatable><thead><tr><th>#</th><th>Peminjam</th><th>Barang</th><th>Jumlah</th><th>Pinjam</th><th>Harus Kembali</th><th>Status</th><th>Aksi</th></tr></thead>
+<tbody>@foreach($commodityLoans as $loan)<tr><td>{{$loop->iteration}}</td><td>{{$loan->user?->name??$loan->borrower}}</td><td>{{$loan->commodity?->item_code}}<br>{{$loan->commodity?->name}}</td><td>{{$loan->quantity}}</td><td>{{$loan->loan_date?->format('d-m-Y')}}</td><td>{{$loan->due_date?->format('d-m-Y')??'-'}}</td><td><span class="badge badge-{{in_array($loan->effective_status,['Ditolak','Bermasalah','Terlambat'])?'danger':($loan->effective_status==='Dikembalikan'?'success':'warning')}}">{{$loan->effective_status}}</span></td>
+<td><div class="btn-group">
+@can('setujui peminjaman') @if($loan->status==='Menunggu')<form method="POST" action="{{route('peminjaman.approve',$loan)}}">@csrf<button class="btn btn-sm btn-success" title="Setujui"><i class="fas fa-check"></i></button></form>
+<form method="POST" action="{{route('peminjaman.reject',$loan)}}" class="ml-1">@csrf<button class="btn btn-sm btn-danger" title="Tolak"><i class="fas fa-xmark"></i></button></form>@endif @endcan
+@can('proses pengembalian') @if(in_array($loan->effective_status,['Dipinjam','Terlambat']))<form method="POST" action="{{route('peminjaman.return',$loan)}}" class="ml-1">@csrf<button class="btn btn-sm btn-info" title="Kembalikan"><i class="fas fa-rotate-left"></i></button></form>@endif @endcan
+@can('hapus peminjaman') @if(!in_array($loan->status,['Dipinjam','Terlambat']))<form method="POST" action="{{route('peminjaman.destroy',$loan)}}" class="ml-1">@csrf @method('DELETE')<button class="btn btn-sm btn-danger delete-button"><i class="fas fa-trash"></i></button></form>@endif @endcan
+</div></td></tr>@endforeach</tbody></x-datatable></div></div>
+@push('modal')<div class="modal fade" id="createLoan"><div class="modal-dialog modal-lg"><div class="modal-content"><form method="POST" action="{{route('peminjaman.store')}}">@csrf
+<div class="modal-header"><h5>Peminjaman Baru</h5><button class="close" data-dismiss="modal">&times;</button></div><div class="modal-body">
+<div class="row"><div class="col-md-8 form-group"><label>Barang</label><select name="commodity_id" class="form-control" required><option value="">Pilih</option>@foreach($commodities as $c)<option value="{{$c->id}}">{{$c->item_code}} - {{$c->name}} (stok {{$c->quantity}})</option>@endforeach</select></div><div class="col-md-4 form-group"><label>Jumlah</label><input type="number" name="quantity" min="1" value="1" class="form-control" required></div></div>
+<div class="row"><div class="col-md-4 form-group"><label>Tanggal Pinjam</label><input type="date" name="loan_date" value="{{today()->toDateString()}}" class="form-control" required></div><div class="col-md-4 form-group"><label>Harus Kembali</label><input type="date" name="due_date" class="form-control" required></div><div class="col-md-4 form-group"><label>Peminjam</label><input type="text" name="borrower" class="form-control" required></div></div>
+<div class="form-group"><label>Keperluan</label><textarea name="purpose" class="form-control" required></textarea></div><div class="form-group"><label>Kondisi Saat Dipinjam</label><input name="borrowed_condition" class="form-control" value="Baik"></div><div class="form-group"><label>Keterangan</label><textarea name="note" class="form-control"></textarea></div>
+</div><div class="modal-footer"><button class="btn btn-primary">Simpan</button></div></form></div></div></div>@endpush
+</x-layout>

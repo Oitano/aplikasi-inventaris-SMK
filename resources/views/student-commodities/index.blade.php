@@ -1,0 +1,5 @@
+<x-layout><x-slot name="title">Data Barang</x-slot><x-slot name="page_heading">Data Barang</x-slot>
+<div class="row">@forelse($commodities as $c)<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6"><div class="card h-100">
+@if($c->photo)<img src="{{asset('storage/'.$c->photo)}}" class="card-img-top" style="height:170px;object-fit:cover">@else<div class="text-center p-4 bg-light"><i class="fas fa-box fa-4x text-muted"></i></div>@endif
+<div class="card-body"><h5>{{$c->name}}</h5><p class="mb-1"><b>Kode:</b> {{$c->item_code}}</p><p class="mb-1"><b>Kategori:</b> {{$c->category??'-'}}</p><p class="mb-1"><b>Kondisi:</b> {{$c->getConditionName()}}</p><p class="mb-1"><b>Status:</b> <span class="badge badge-{{$c->getStatusBadgeClass()}}">{{$c->status}}</span></p><p class="mb-0"><b>Lokasi:</b> {{$c->commodity_location?->name??'-'}}</p></div>
+</div></div>@empty<div class="col-12"><div class="alert alert-info">Belum ada barang yang dapat ditampilkan.</div></div>@endforelse</div></x-layout>
